@@ -1,6 +1,7 @@
 package com.binx.fireline.ui.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -64,7 +65,11 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Snackbar.make(parentView, incidentList.get(position).getIncidentNumber() + " => " + incidentList.get(position).getResponseDate(), Snackbar.LENGTH_LONG).show();
+//                Snackbar.make(parentView, incidentList.get(position).getIncidentNumber() + " => " + incidentList.get(position).getResponseDate(), Snackbar.LENGTH_LONG).show();
+                Intent intent = new Intent(view.getContext(), MapsActivity.class);
+                intent.putExtra("Lat", incidentList.get(position).getLatitude());
+                intent.putExtra("Lon", incidentList.get(position).getLongitude());
+                view.getContext().startActivity(intent);
             }
         });
 
