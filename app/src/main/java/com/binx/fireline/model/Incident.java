@@ -3,11 +3,13 @@ package com.binx.fireline.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by james on 1/5/17.
  */
 
-public class Incident {
+public class Incident implements Serializable{
 
     @SerializedName("Address")
     @Expose

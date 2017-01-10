@@ -20,13 +20,11 @@ import android.widget.Toast;
 import com.binx.fireline.R;
 import com.binx.fireline.adapter.IncidentAdapter;
 import com.binx.fireline.model.Incident;
-import com.binx.fireline.model.IncidentList;
 import com.binx.fireline.retrofit.api.ApiService;
 import com.binx.fireline.retrofit.api.RetroClient;
 import com.binx.fireline.utils.InternetConnection;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -67,8 +65,9 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                Snackbar.make(parentView, incidentList.get(position).getIncidentNumber() + " => " + incidentList.get(position).getResponseDate(), Snackbar.LENGTH_LONG).show();
                 Intent intent = new Intent(view.getContext(), MapsActivity.class);
-                intent.putExtra("Lat", incidentList.get(position).getLatitude());
-                intent.putExtra("Lon", incidentList.get(position).getLongitude());
+                ArrayList<Incident> incidentSingle = new ArrayList<>();
+                incidentSingle.add(incidentList.get(position));
+                intent.putExtra("Incidents", incidentSingle);
                 view.getContext().startActivity(intent);
             }
         });
@@ -76,6 +75,17 @@ public class MainActivity extends AppCompatActivity {
         Toast toast = Toast.makeText(getApplicationContext(), R.string.string_click_to_load, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
+
+        FloatingActionButton fabMap = (FloatingActionButton) findViewById(R.id.fabMap);
+        assert  fabMap != null;
+        fabMap.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(@NonNull final View view) {
+                Intent intent = new Intent(view.getContext(), MapsActivity.class);
+                intent.putExtra("Incidents", incidentList);
+                view.getContext().startActivity(intent);
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         assert fab != null;

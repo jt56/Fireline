@@ -23,22 +23,30 @@
             android:id="@+id/textViewIncidentType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="1dp"
             android:textAppearance="?android:textAppearanceLarge"
+            tools:text="TextView" />
+
+        <TextView
+            android:id="@+id/textViewStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="1dp"
+            android:textAppearance="?android:textAppearanceMedium"
             tools:text="TextView" />
 
         <TextView
             android:id="@+id/textViewResponseDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="1dp"
             android:textAppearance="?android:textAppearanceMedium"
             tools:text="TextView" />
         <TextView
             android:id="@+id/textViewBlockAddrressCity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="1dp"
             android:textAppearance="?android:textAppearanceMedium"
             tools:text="TextView" />
 

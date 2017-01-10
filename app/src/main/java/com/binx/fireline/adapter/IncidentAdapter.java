@@ -1,6 +1,7 @@
 package com.binx.fireline.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,19 +16,20 @@ import com.binx.fireline.R;
 import com.binx.fireline.model.Incident;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
+import java.util.ArrayList;
+
 
 /**
  * Created by james on 1/5/17.
  */
 
 public class IncidentAdapter extends ArrayAdapter<Incident> {
-    List<Incident> incidentList;
+    ArrayList<Incident> incidentList;
     Context context;
     private LayoutInflater mInflater;
 
     // Constructors
-    public IncidentAdapter(Context context, List<Incident> objects) {
+    public IncidentAdapter(Context context, ArrayList<Incident> objects) {
         super(context, 0, objects);
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
@@ -53,10 +55,15 @@ public class IncidentAdapter extends ArrayAdapter<Incident> {
         Incident item = getItem(position);
 
         vh.textViewIncidentType.setText(item.getIncidentType());
+        vh.textViewStatus.setText(item.getStatus());
         vh.textViewResponseDate.setText(item.getResponseDate());
         vh.textViewBlockAddrressCity.setText(item.getBlock() + " " + item.getAddress() + ", " + item.getCity());
 //        Picasso.with(context).load(item.getProfilePic()).placeholder(R.mipmap.ic_launcher).error(R.mipmap.ic_launcher).into(vh.imageView);
-
+        if (position % 2 == 1) {
+            vh.rootView.setBackgroundColor(Color.LTGRAY);
+        } else {
+            vh.rootView.setBackgroundColor(Color.WHITE);
+        }
         return vh.rootView;
     }
 
@@ -64,23 +71,26 @@ public class IncidentAdapter extends ArrayAdapter<Incident> {
         public final RelativeLayout rootView;
 //        public final ImageView imageView;
         public final TextView textViewIncidentType;
+        public final TextView textViewStatus;
         public final TextView textViewResponseDate;
         public final TextView textViewBlockAddrressCity;
 
-        private ViewHolder(RelativeLayout rootView, TextView textViewIncidentType, TextView textViewResponseDate, TextView textViewBlockAddrressCity) {
+        private ViewHolder(RelativeLayout rootView, TextView textViewIncidentType, TextView textViewStatus, TextView textViewResponseDate, TextView textViewBlockAddrressCity) {
             this.rootView = rootView;
 //            this.imageView = imageView;
             this.textViewIncidentType = textViewIncidentType;
+            this.textViewStatus = textViewStatus;
             this.textViewResponseDate = textViewResponseDate;
             this.textViewBlockAddrressCity = textViewBlockAddrressCity;
         }
 
         public static ViewHolder create(RelativeLayout rootView) {
 //            ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
-            TextView textViewIncidentNumber = (TextView) rootView.findViewById(R.id.textViewIncidentType);
+            TextView textViewIncidentType = (TextView) rootView.findViewById(R.id.textViewIncidentType);
+            TextView textViewStatus = (TextView) rootView.findViewById(R.id.textViewStatus);
             TextView textViewResponseDate = (TextView) rootView.findViewById(R.id.textViewResponseDate);
             TextView textViewBlockAddrressCity = (TextView) rootView.findViewById(R.id.textViewBlockAddrressCity);
-            return new ViewHolder(rootView, textViewIncidentNumber, textViewResponseDate, textViewBlockAddrressCity);
+            return new ViewHolder(rootView, textViewIncidentType, textViewStatus, textViewResponseDate, textViewBlockAddrressCity);
         }
     }
 }
