@@ -9,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.binx.fireline.R;
@@ -24,8 +26,15 @@ import com.binx.fireline.model.Incident;
 import com.binx.fireline.retrofit.api.ApiService;
 import com.binx.fireline.retrofit.api.RetroClient;
 import com.binx.fireline.utils.InternetConnection;
+import com.mikepenz.aboutlibraries.Libs;
+import com.mikepenz.aboutlibraries.LibsBuilder;
 
+import org.w3c.dom.Text;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,12 +43,13 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView textViewLastUpdate;
     private ListView listView;
     private View parentView;
 
     private ArrayList<Incident> incidentList;
     private IncidentAdapter adapter;
-    private String LOG_TAG = "MainActivity";
+    private final static String LOG_TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +57,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        textViewLastUpdate = (TextView) findViewById(R.id.textViewLastUpdate);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         /**
          * Array List for Binding Data from JSON to this list
          */
@@ -73,9 +83,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Toast toast = Toast.makeText(getApplicationContext(), R.string.string_click_to_load, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
+//        Toast toast = Toast.makeText(getApplicationContext(), R.string.string_click_to_load, Toast.LENGTH_SHORT);
+//        toast.setGravity(Gravity.CENTER, 0, 0);
+//        toast.show();
 
         FloatingActionButton fabMap = (FloatingActionButton) findViewById(R.id.fabMap);
         assert  fabMap != null;
@@ -111,6 +121,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         );
+
+        fetchFirelineJSON(true);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
     @Override
@@ -129,7 +147,27 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
             return true;
+        }
+
+        switch (item.getItemId()) {
+
+            // Check if user triggered a refresh:
+            case R.id.action_settings:
+                Log.i(LOG_TAG, "settings");
+                return true;
+
+            case R.id.action_about:
+                new LibsBuilder()
+                        //provide a style (optional) (LIGHT, DARK, LIGHT_DARK_TOOLBAR)
+                        .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
+                        .withAboutIconShown(true)
+                        .withAboutVersionShown(true)
+                        .withAboutDescription("<b>Ventura County Fireline</b> This app uses public information provided by Ventura County")
+                        //start the activity
+                        .start(this);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -179,6 +217,10 @@ public class MainActivity extends AppCompatActivity {
                          */
                         adapter = new IncidentAdapter(MainActivity.this, incidentList);
                         listView.setAdapter(adapter);
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd - HH:mm:ss");
+                        String currentDateandTime = sdf.format(new Date());
+                        textViewLastUpdate.setText(currentDateandTime);
 
                     } else {
                         Snackbar.make(parentView, R.string.string_some_thing_wrong, Snackbar.LENGTH_LONG).show();

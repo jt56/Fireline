@@ -39,4 +39,9 @@ dependencies {
     //Maps
     compile 'com.google.android.gms:play-services-maps:10.0.1'
     compile 'com.google.android.gms:play-services-location:10.0.1'
+
+    //About
+    compile('com.mikepenz:aboutlibraries:5.8.1@aar') {
+        transitive = true
+    }
 }
