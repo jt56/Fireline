@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -32,20 +33,20 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    /**
-     * Views
-     */
+    private SwipeRefreshLayout swipeRefreshLayout;
     private ListView listView;
     private View parentView;
 
     private ArrayList<Incident> incidentList;
     private IncidentAdapter adapter;
+    private String LOG_TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -92,66 +93,24 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(@NonNull final View view) {
-
-                /**
-                 * Checking Internet Connection
-                 */
-                if (InternetConnection.checkConnection(getApplicationContext())) {
-                    final ProgressDialog dialog;
-                    /**
-                     * Progress Dialog for User Interaction
-                     */
-                    dialog = new ProgressDialog(MainActivity.this);
-                    dialog.setTitle(getString(R.string.string_getting_json_title));
-                    dialog.setMessage(getString(R.string.string_getting_json_message));
-                    dialog.show();
-
-                    //Creating an object of our api interface
-                    ApiService api = RetroClient.getApiService();
-
-                    /**
-                     * Calling JSON
-                     */
-                    Call<ArrayList<Incident>> call = api.getFirelineJSON();
-
-                    /**
-                     * Enqueue Callback will be call when get response...
-                     */
-                    call.enqueue(new Callback<ArrayList<Incident>>() {
-                        @Override
-                        public void onResponse(Call<ArrayList<Incident>>call, Response<ArrayList<Incident>> response) {
-                            //Dismiss Dialog
-                            dialog.dismiss();
-
-                            if (response.isSuccessful()) {
-                                /**
-                                 * Got Successfully
-                                 */
-                                incidentList = response.body();
-
-                                /**
-                                 * Binding that List to Adapter
-                                 */
-                                adapter = new IncidentAdapter(MainActivity.this, incidentList);
-                                listView.setAdapter(adapter);
-
-                            } else {
-                                Snackbar.make(parentView, R.string.string_some_thing_wrong, Snackbar.LENGTH_LONG).show();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<ArrayList<Incident>> call, Throwable t) {
-                            dialog.dismiss();
-                            Log.e("MainActivity", t.getMessage());
-                        }
-                    });
-
-                } else {
-                    Snackbar.make(parentView, R.string.string_internet_connection_not_available, Snackbar.LENGTH_LONG).show();
-                }
+                fetchFirelineJSON(true);
             }
         });
+
+        /*
+        * Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked when the user
+        * performs a swipe-to-refresh gesture.
+        */
+        swipeRefreshLayout.setOnRefreshListener(
+            new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout");
+                    fetchFirelineJSON(false);
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }
+        );
     }
 
     @Override
@@ -174,5 +133,69 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void fetchFirelineJSON(boolean showDialog){
+        /**
+         * Checking Internet Connection
+         */
+        if (InternetConnection.checkConnection(getApplicationContext())) {
+            /**
+             * Progress Dialog for User Interaction
+             */
+            final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+            if (showDialog){
+                dialog.setTitle(getString(R.string.string_getting_json_title));
+                dialog.setMessage(getString(R.string.string_getting_json_message));
+                dialog.show();
+            }
+
+            //Creating an object of our api interface
+            ApiService api = RetroClient.getApiService();
+
+            /**
+             * Calling JSON
+             */
+            Call<ArrayList<Incident>> call = api.getFirelineJSON();
+
+            /**
+             * Enqueue Callback will be call when get response...
+             */
+            call.enqueue(new Callback<ArrayList<Incident>>() {
+                @Override
+                public void onResponse(Call<ArrayList<Incident>>call, Response<ArrayList<Incident>> response) {
+                    //Dismiss Dialog
+                    if (dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                    if (response.isSuccessful()) {
+                        /**
+                         * Got Successfully
+                         */
+                        incidentList = response.body();
+
+                        /**
+                         * Binding that List to Adapter
+                         */
+                        adapter = new IncidentAdapter(MainActivity.this, incidentList);
+                        listView.setAdapter(adapter);
+
+                    } else {
+                        Snackbar.make(parentView, R.string.string_some_thing_wrong, Snackbar.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ArrayList<Incident>> call, Throwable t) {
+                    if (dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                    Log.e(LOG_TAG, t.getMessage());
+                }
+            });
+
+        } else {
+            Snackbar.make(parentView, R.string.string_internet_connection_not_available, Snackbar.LENGTH_LONG).show();
+        }
     }
 }
