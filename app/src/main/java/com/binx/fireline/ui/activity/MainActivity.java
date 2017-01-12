@@ -23,6 +23,8 @@ import com.binx.fireline.model.Incident;
 import com.binx.fireline.retrofit.api.ApiService;
 import com.binx.fireline.retrofit.api.RetroClient;
 import com.binx.fireline.utils.InternetConnection;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
 import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 
@@ -35,6 +37,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView textViewLastUpdate;
@@ -49,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         textViewLastUpdate = (TextView) findViewById(R.id.textViewLastUpdate);
@@ -82,15 +88,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(view.getContext(), MapsActivity.class);
                 intent.putExtra("Incidents", incidentList);
                 view.getContext().startActivity(intent);
-            }
-        });
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        assert fab != null;
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(@NonNull final View view) {
-                fetchFirelineJSON(true);
             }
         });
 
@@ -214,7 +211,8 @@ public class MainActivity extends AppCompatActivity {
                     if (dialog.isShowing()) {
                         dialog.dismiss();
                     }
-                    Log.e(LOG_TAG, t.getMessage());
+                    FirebaseCrash.logcat(Log.ERROR, LOG_TAG, "Failed to get fireline json");
+                    FirebaseCrash.report(t);
                 }
             });
 
