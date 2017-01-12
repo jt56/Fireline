@@ -9,16 +9,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.binx.fireline.R;
 import com.binx.fireline.adapter.IncidentAdapter;
@@ -29,11 +26,8 @@ import com.binx.fireline.utils.InternetConnection;
 import com.mikepenz.aboutlibraries.Libs;
 import com.mikepenz.aboutlibraries.LibsBuilder;
 
-import org.w3c.dom.Text;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import retrofit2.Call;
@@ -60,9 +54,7 @@ public class MainActivity extends AppCompatActivity {
         textViewLastUpdate = (TextView) findViewById(R.id.textViewLastUpdate);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        /**
-         * Array List for Binding Data from JSON to this list
-         */
+
         incidentList = new ArrayList<>();
 
         parentView = findViewById(R.id.parentLayout);
@@ -74,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Snackbar.make(parentView, incidentList.get(position).getIncidentNumber() + " => " + incidentList.get(position).getResponseDate(), Snackbar.LENGTH_LONG).show();
                 Intent intent = new Intent(view.getContext(), MapsActivity.class);
                 ArrayList<Incident> incidentSingle = new ArrayList<>();
                 incidentSingle.add(incidentList.get(position));
@@ -82,10 +73,6 @@ public class MainActivity extends AppCompatActivity {
                 view.getContext().startActivity(intent);
             }
         });
-
-//        Toast toast = Toast.makeText(getApplicationContext(), R.string.string_click_to_load, Toast.LENGTH_SHORT);
-//        toast.setGravity(Gravity.CENTER, 0, 0);
-//        toast.show();
 
         FloatingActionButton fabMap = (FloatingActionButton) findViewById(R.id.fabMap);
         assert  fabMap != null;
@@ -111,8 +98,7 @@ public class MainActivity extends AppCompatActivity {
         * Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked when the user
         * performs a swipe-to-refresh gesture.
         */
-        swipeRefreshLayout.setOnRefreshListener(
-            new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout");
@@ -143,17 +129,13 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-
-            return true;
-        }
 
         switch (item.getItemId()) {
-
             // Check if user triggered a refresh:
+            case R.id.action_refresh:
+                fetchFirelineJSON(true);
+                return true;
+
             case R.id.action_settings:
                 Log.i(LOG_TAG, "settings");
                 return true;
@@ -164,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                         .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
                         .withAboutIconShown(true)
                         .withAboutVersionShown(true)
-                        .withAboutDescription("<b>Ventura County Fireline</b> This app uses public information provided by Ventura County")
+                        .withAboutDescription(getString(R.string.string_about))
                         //start the activity
                         .start(this);
                 return true;
