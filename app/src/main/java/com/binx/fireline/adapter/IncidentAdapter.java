@@ -58,7 +58,8 @@ public class IncidentAdapter extends ArrayAdapter<Incident> {
         vh.textViewStatus.setText(item.getStatus());
         vh.textViewResponseDate.setText(item.getResponseDate());
         vh.textViewBlockAddrressCity.setText(item.getBlock() + " " + item.getAddress() + ", " + item.getCity());
-//        Picasso.with(context).load(item.getProfilePic()).placeholder(R.mipmap.ic_launcher).error(R.mipmap.ic_launcher).into(vh.imageView);
+        vh.imageView.setImageResource(new IncidentImageAdapter().getIncidentTypeImageId(item.getIncidentType()));
+
         if (position % 2 == 1) {
             vh.rootView.setBackgroundColor(Color.LTGRAY);
         } else {
@@ -69,15 +70,15 @@ public class IncidentAdapter extends ArrayAdapter<Incident> {
 
     private static class ViewHolder {
         public final RelativeLayout rootView;
-//        public final ImageView imageView;
+        public final ImageView imageView;
         public final TextView textViewIncidentType;
         public final TextView textViewStatus;
         public final TextView textViewResponseDate;
         public final TextView textViewBlockAddrressCity;
 
-        private ViewHolder(RelativeLayout rootView, TextView textViewIncidentType, TextView textViewStatus, TextView textViewResponseDate, TextView textViewBlockAddrressCity) {
+        private ViewHolder(RelativeLayout rootView, ImageView imageView, TextView textViewIncidentType, TextView textViewStatus, TextView textViewResponseDate, TextView textViewBlockAddrressCity) {
             this.rootView = rootView;
-//            this.imageView = imageView;
+            this.imageView = imageView;
             this.textViewIncidentType = textViewIncidentType;
             this.textViewStatus = textViewStatus;
             this.textViewResponseDate = textViewResponseDate;
@@ -85,12 +86,12 @@ public class IncidentAdapter extends ArrayAdapter<Incident> {
         }
 
         public static ViewHolder create(RelativeLayout rootView) {
-//            ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
+            ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
             TextView textViewIncidentType = (TextView) rootView.findViewById(R.id.textViewIncidentType);
             TextView textViewStatus = (TextView) rootView.findViewById(R.id.textViewStatus);
             TextView textViewResponseDate = (TextView) rootView.findViewById(R.id.textViewResponseDate);
             TextView textViewBlockAddrressCity = (TextView) rootView.findViewById(R.id.textViewBlockAddrressCity);
-            return new ViewHolder(rootView, textViewIncidentType, textViewStatus, textViewResponseDate, textViewBlockAddrressCity);
+            return new ViewHolder(rootView, imageView, textViewIncidentType, textViewStatus, textViewResponseDate, textViewBlockAddrressCity);
         }
     }
 }

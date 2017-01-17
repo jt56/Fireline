@@ -86,7 +86,12 @@ public class Incident implements Serializable{
     }
 
     public String getIncidentType() {
-        return incidentType;
+        switch(incidentType) {
+            case "TC" :
+                return "Traffic Collision";
+            default :
+                return incidentType;
+        }
     }
 
     public void setIncidentType(String incidentType) {

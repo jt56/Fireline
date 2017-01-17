@@ -81,8 +81,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         FloatingActionButton fabMap = (FloatingActionButton) findViewById(R.id.fabMap);
-        assert  fabMap != null;
-        fabMap.setOnClickListener(new View.OnClickListener(){
+        assert fabMap != null;
+        fabMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(@NonNull final View view) {
                 Intent intent = new Intent(view.getContext(), MapsActivity.class);
@@ -96,13 +96,13 @@ public class MainActivity extends AppCompatActivity {
         * performs a swipe-to-refresh gesture.
         */
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout");
-                    fetchFirelineJSON(false);
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-            }
+                                                    @Override
+                                                    public void onRefresh() {
+                                                        Log.i(LOG_TAG, "onRefresh called from SwipeRefreshLayout");
+                                                        fetchFirelineJSON(false);
+                                                        swipeRefreshLayout.setRefreshing(false);
+                                                    }
+                                                }
         );
 
         fetchFirelineJSON(true);
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void fetchFirelineJSON(boolean showDialog){
+    private void fetchFirelineJSON(boolean showDialog) {
         /**
          * Checking Internet Connection
          */
@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
              * Progress Dialog for User Interaction
              */
             final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
-            if (showDialog){
+            if (showDialog) {
                 dialog.setTitle(getString(R.string.string_getting_json_title));
                 dialog.setMessage(getString(R.string.string_getting_json_message));
                 dialog.show();
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
              */
             call.enqueue(new Callback<ArrayList<Incident>>() {
                 @Override
-                public void onResponse(Call<ArrayList<Incident>>call, Response<ArrayList<Incident>> response) {
+                public void onResponse(Call<ArrayList<Incident>> call, Response<ArrayList<Incident>> response) {
                     //Dismiss Dialog
                     if (dialog.isShowing()) {
                         dialog.dismiss();
