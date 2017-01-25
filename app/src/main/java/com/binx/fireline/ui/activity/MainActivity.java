@@ -85,9 +85,13 @@ public class MainActivity extends AppCompatActivity {
         fabMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(@NonNull final View view) {
-                Intent intent = new Intent(view.getContext(), MapsActivity.class);
-                intent.putExtra("Incidents", incidentList);
-                view.getContext().startActivity(intent);
+                if (incidentList.isEmpty()){
+                    Snackbar.make(parentView, R.string.string_no_incidents_please_refresh, Snackbar.LENGTH_LONG).show();
+                } else {
+                    Intent intent = new Intent(view.getContext(), MapsActivity.class);
+                    intent.putExtra("Incidents", incidentList);
+                    view.getContext().startActivity(intent);
+                }
             }
         });
 
